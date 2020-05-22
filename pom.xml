@@ -1,0 +1,237 @@
+<!--
+  ~ JBoss, Home of Professional Open Source.
+  ~ Copyright 2015, Red Hat, Inc., and individual contributors
+  ~ as indicated by the @author tags. See the copyright.txt file in the
+  ~ distribution for a full listing of individual contributors.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.jboss</groupId>
+        <artifactId>jboss-parent</artifactId>
+        <version>35</version>
+    </parent>
+
+    <groupId>org.wildfly</groupId>
+    <artifactId>wildfly-sourceless-parent</artifactId>
+    <version>20.0.0.Final-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	
+    <name>Source WildFly Distribution Generation Parent</name>
+
+    <licenses>
+        <license>
+            <name>Apache License 2.0</name>
+            <url>http://repository.jboss.org/licenses/apache-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <properties>
+		
+        <!-- Plugin versions -->
+		<version.org.jboss.galleon>4.2.5.Final</version.org.jboss.galleon>
+		<version.org.wildfly.galleon-plugins>4.2.8.Final-SNAPSHOT</version.org.wildfly.galleon-plugins>
+		<version.org.wildfly.core>12.0.0.Beta3</version.org.wildfly.core> <!-- Yuck! -->
+		<version.org.wildfly.common>1.5.2.Final</version.org.wildfly.common> <!-- Yuck! -->
+		<version.verifier.plugin>1.1</version.verifier.plugin>
+		
+		<!-- Normal dependency versions -->
+		<version.org.wildfly>${project.version}</version.org.wildfly>
+        <version.org.wildfly.wildfly-galleon-pack-src>${version.org.wildfly}</version.org.wildfly.wildfly-galleon-pack-src>
+		
+		<!-- Test dependency versions -->
+		<version.junit>4.12</version.junit>
+		<version.org.jboss.metadata>13.0.0.Final</version.org.jboss.metadata>
+		
+        <!-- Protocol to use for communication with remote maven repositories.
+             You can set to 'http' if you are using a maven proxy and 'https'
+             interferes with that. Use 'https' for builds that will be released
+             to non-snapshot public maven repos -->
+        <maven.repository.protocol>https</maven.repository.protocol>
+        <!-- The full remote maven repo URL; can be overridden via -D for special use cases -->
+        <maven.repository.url>${maven.repository.protocol}://repository.jboss.org/nexus/content/groups/public/</maven.repository.url>
+        <!-- https://access.redhat.com/maven-repository -->
+        <maven.redhat.repository.url>${maven.repository.protocol}://maven.repository.redhat.com/ga/</maven.redhat.repository.url>
+
+        <!-- Properties that drive the build -->
+        <full.dist.product.release.name>WildFly Full</full.dist.product.release.name>
+        <full.maven.groupId>${project.groupId}</full.maven.groupId>
+        <full.maven.version>${project.version}</full.maven.version>
+        <ee.maven.groupId>${project.groupId}</ee.maven.groupId>
+        <ee.maven.version>${version.org.wildfly}</ee.maven.version>
+        <!-- Properties that drive the names of various directories produced by and used in the build -->
+        <server.output.dir.prefix>wildfly</server.output.dir.prefix>
+        <!-- Version suffix that is appended to directories. Default is the maven GAV version but this can be edited to use a short form version -->
+        <server.output.dir.version>${project.version}</server.output.dir.version>
+        <galleon.fork.embedded>true</galleon.fork.embedded>
+        <galleon.log.time>true</galleon.log.time>
+		
+		<!-- Values expected by verifier plugin -->
+        <full.dist.product.slot>main</full.dist.product.slot>
+        <full.dist.product.release.version>${project.version}</full.dist.product.release.version>
+        <!-- A short variant of product.release.version used in 'startsWith' tests done by dist verification logic -->
+        <verifier.product.release.version>20.0</verifier.product.release.version>
+		
+    </properties>
+	
+	<modules>
+		<module>feature-pack</module>
+		<module>dist</module>
+	</modules>
+	
+	<dependencyManagement>
+		<dependencies>
+		    <dependency>
+			    <groupId>org.wildfly</groupId>
+			    <artifactId>wildfly-galleon-pack-src</artifactId>
+			    <type>pom</type>
+			    <version>${version.org.wildfly.wildfly-galleon-pack-src}</version>
+		    </dependency>
+		    <dependency>
+			    <groupId>org.wildfly</groupId>
+			    <artifactId>wildfly-galleon-pack-src</artifactId>
+			    <type>zip</type>
+			    <version>${version.org.wildfly.wildfly-galleon-pack-src}</version>
+		    </dependency>
+			
+		    <dependency>
+			    <groupId>org.wildfly</groupId>
+			    <artifactId>wildfly-galleon-pack</artifactId>
+			    <type>pom</type>
+			    <version>${project.version}</version>
+		    </dependency>
+		    <dependency>
+			    <groupId>org.wildfly</groupId>
+			    <artifactId>wildfly-galleon-pack</artifactId>
+			    <type>zip</type>
+			    <version>${project.version}</version>
+		    </dependency>
+	</dependencies>	
+	</dependencyManagement>		
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.jboss.galleon</groupId>
+                    <artifactId>galleon-maven-plugin</artifactId>
+                    <version>${version.org.jboss.galleon}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.wildfly.galleon-plugins</groupId>
+                    <artifactId>wildfly-galleon-maven-plugin</artifactId>
+                    <version>${version.org.wildfly.galleon-plugins}</version>
+                    <dependencies>
+                        <!-- feature-spec-gen uses wildfly-embedded to generate the feature specs, hence the designated wildfly-embedded version must match the pack one -->
+                        <dependency>
+                            <groupId>org.wildfly.core</groupId>
+                            <artifactId>wildfly-embedded</artifactId>
+                            <version>${version.org.wildfly.core}</version> <!-- Yuck! -->
+                        </dependency>
+                        <!-- If you add a dependency on wildfly-embedded you need to bring your own transitives -->
+                        <dependency>
+                            <groupId>org.wildfly.common</groupId>
+                            <artifactId>wildfly-common</artifactId>
+                            <version>${version.org.wildfly.common}</version> <!-- Yuck! -->
+                        </dependency>
+                    </dependencies>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-verifier-plugin</artifactId>
+                    <version>${version.verifier.plugin}</version>
+                    <executions>
+                        <execution>
+                            <id>main</id>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>verify</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <verificationFile>target/verifier/verifications.xml</verificationFile>
+                    </configuration>
+                </plugin>
+			</plugins>
+		</pluginManagement>
+    </build>
+
+    <repositories>
+        <repository>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+            </snapshots>
+            <id>jboss-public-repository-group</id>
+            <name>JBoss Public Repository Group</name>
+            <url>${maven.repository.url}</url>
+            <layout>default</layout>
+        </repository>
+        <repository>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+            </snapshots>
+            <id>jboss-enterprise-maven-repository</id>
+            <name>JBoss Enterprise Maven Repository</name>
+            <url>${maven.redhat.repository.url}</url>
+            <layout>default</layout>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <id>jboss-public-repository-group</id>
+            <name>JBoss Public Repository Group</name>
+            <url>${maven.repository.url}</url>
+        </pluginRepository>
+        <pluginRepository>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <id>jboss-enterprise-maven-repository</id>
+            <name>JBoss Enterprise Maven Repository</name>
+            <url>${maven.redhat.repository.url}</url>
+        </pluginRepository>
+    </pluginRepositories>
+	
+</project>
