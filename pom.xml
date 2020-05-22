@@ -49,6 +49,9 @@
 
     <properties>
 		
+		<!-- SP override versions -->
+		<version.org.wildfly.transaction.client>1.1.12.Final</version.org.wildfly.transaction.client>
+		
         <!-- Plugin versions -->
 		<version.org.jboss.galleon>4.2.5.Final</version.org.jboss.galleon>
 		<version.org.wildfly.galleon-plugins>4.2.8.Final-SNAPSHOT</version.org.wildfly.galleon-plugins>
@@ -125,6 +128,21 @@
 			    <type>zip</type>
 			    <version>${project.version}</version>
 		    </dependency>
+			
+			<!-- SP overrides -->
+
+            <dependency>
+                <groupId>org.wildfly.transaction</groupId>
+                <artifactId>wildfly-transaction-client</artifactId>
+                <version>${version.org.wildfly.transaction.client}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>*</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+			
 	</dependencies>	
 	</dependencyManagement>		
 
