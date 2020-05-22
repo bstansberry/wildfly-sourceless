@@ -34,7 +34,7 @@
 
     <groupId>org.wildfly</groupId>
     <artifactId>wildfly-sourceless-parent</artifactId>
-    <version>20.0.0.Final-SNAPSHOT</version>
+    <version>20.0.0.SP1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	
     <name>Source WildFly Distribution Generation Parent</name>
@@ -57,7 +57,7 @@
 		<version.verifier.plugin>1.1</version.verifier.plugin>
 		
 		<!-- Normal dependency versions -->
-		<version.org.wildfly>${project.version}</version.org.wildfly>
+		<version.org.wildfly>20.0.0.Final-SNAPSHOT</version.org.wildfly>
         <version.org.wildfly.wildfly-ee-galleon-pack-src>${version.org.wildfly}</version.org.wildfly.wildfly-ee-galleon-pack-src>
 		
 		<!-- Test dependency versions -->
